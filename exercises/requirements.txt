@@ -9,4 +9,4 @@ tensorflow
 keras
 Pillow
 plotly
-
+PyQt5
