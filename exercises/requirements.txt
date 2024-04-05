@@ -10,3 +10,5 @@ keras
 Pillow
 plotly
 PyQt5
+ucimlrepo
+fuzzy-c-means
