@@ -84,9 +84,9 @@ if __name__ == "__main__":
     assert np.sum(y) == np.sum(shuffled_y)
 
     # plot them to see how uniform it is
-    fig, axs = plt.subplots(nrows=1, ncols=2)
-    axs[0].plot(y)
-    axs[1].plot(shuffled_y)
+    # fig, axs = plt.subplots(nrows=1, ncols=2)
+    # axs[0].plot(y)
+    # axs[1].plot(shuffled_y)
     # plt.show()
 
     # this plot shows that shuffling makes it much more uniform
@@ -135,3 +135,20 @@ if __name__ == "__main__":
     print(f"Precision: {precision}")
     print(f"Recall: {recall}")
     print(f"F1: {f1}")
+
+    # as we all know, if you can't graph it you don't understand it
+    # therefore we're gonna do some PCA to shrink our 8D space to 3D
+
+    from sklearn.decomposition import PCA
+
+    X_in_3D = PCA(n_components=3).fit_transform(X)
+
+    # plot in 3D
+    import mpl_toolkits.mplot3d
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection="3d")
+
+    ax.scatter(X_in_3D[:, 0], X_in_3D[:, 1], X_in_3D[:, 2], c=Y)
+
+    plt.show()
