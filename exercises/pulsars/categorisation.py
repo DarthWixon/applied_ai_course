@@ -3,14 +3,15 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from fcmeans import FCM
+from pandas.core.common import random_state
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.utils import shuffle
 from ucimlrepo import fetch_ucirepo
 
 # fetch dataset
 htru2 = fetch_ucirepo(id=372)
 
-# data (as pandas dataframes)
+# data (as pa_ndas dataframes)
 X = htru2.data.features
 Y = htru2.data.targets
 
@@ -19,6 +20,9 @@ Y = htru2.data.targets
 
 # sns.pairplot(data=X, corner=True, kind="kde")
 # plt.show()
+
+
+TRYING_OUT_K_MEANS = False
 
 
 # try out the old k means, see what happens:
@@ -60,4 +64,45 @@ def try_out_k_means():
 
 
 if __name__ == "__main__":
-    try_out_k_means()
+    if TRYING_OUT_K_MEANS:
+        try_out_k_means()
+
+    # it appears that k means isn't our lad, let's try and be fancy
+    # and build a classifier
+
+    # Things to do:
+    # we need to split the data into train and test
+    #   - this might mean we need to scramble the order of the data to make sure
+    #     that the pulsars are evenly distributed. Let's cheat and plot the pulsar locations
+    #     before and after shuffling
+
+    rng = np.random.default_rng(seed=42)
+    y = Y.to_numpy()[:, 0]
+    shuffled_y = rng.permutation(y)
+    # check we have the same number of 1s after the shuffle
+    assert np.sum(y) == np.sum(shuffled_y)
+
+    # plot them to see how uniform it is
+    fig, axs = plt.subplots(nrows=1, ncols=2)
+    axs[0].plot(y)
+    axs[1].plot(shuffled_y)
+    # plt.show()
+
+    # this plot shows that shuffling makes it much more uniform
+    # so we'll do that to the entire dataset
+    # we need to join X and Y together so that we keep the labels sane
+    # and then split them again afterwards
+
+    def entire_dataset_shuffler(data, targets):
+        # concat the data together
+        big_df = pd.concat([data, targets], axis=1)
+        print(big_df.shape)
+        # using sklearn.utils.shuffle
+        shuffled_df = shuffle(big_df, random_state=42)
+        # shuffled_targets = shuffled_df["class"]
+        # shuffled_data = shuffled_df.drop(columns=["class"])
+        return shuffled_df
+
+    shuffled_dataset = entire_dataset_shuffler(X, Y)
+
+    # now we can split into test and training datasets
