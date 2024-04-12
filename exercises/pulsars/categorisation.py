@@ -151,4 +151,15 @@ if __name__ == "__main__":
 
     ax.scatter(X_in_3D[:, 0], X_in_3D[:, 1], X_in_3D[:, 2], c=Y)
 
+    # plt.show()
+
+    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+    X_lad = LinearDiscriminantAnalysis(n_components=1).fit_transform(X, Y)
+    print(X_lad.shape)
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    ax2.scatter(X_lad[:, 0], np.zeros_like(X_lad[:, 0]), c=Y.to_numpy())
     plt.show()
+
+    # turns out LDA isn't that useful when I only have 2 classes to discriminate between
