@@ -5,6 +5,7 @@ import seaborn as sns
 from fcmeans import FCM
 from pandas.core.common import random_state
 from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from ucimlrepo import fetch_ucirepo
 
@@ -106,3 +107,31 @@ if __name__ == "__main__":
     shuffled_dataset = entire_dataset_shuffler(X, Y)
 
     # now we can split into test and training datasets
+    # my research tells me that sklearn can just do all this (including shuffling) for me (of course it can...)
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, Y, test_size=0.25, random_state=42, shuffle=True
+    )
+    # I'm giving myself points for working out I needed to shuffle it. Even though if
+    # I had done any reading at all I'd have saved half an hour
+
+    # we're gonna try a support vector machine, as I play support classes and like linear algebra
+
+    from sklearn import svm
+
+    classifier = svm.SVC()
+    classifier.fit(X_train, Y_train)
+
+    # now we see how well it did
+    import sklearn.metrics as skmet
+
+    Y_predicted = classifier.predict(X_test)
+
+    accuracy = skmet.accuracy_score(Y_test, Y_predicted)
+    precision = skmet.precision_score(Y_test, Y_predicted)
+    recall = skmet.recall_score(Y_test, Y_predicted)
+    f1 = skmet.f1_score(Y_test, Y_predicted)
+
+    print(f"Accuracy: {accuracy}")
+    print(f"Precision: {precision}")
+    print(f"Recall: {recall}")
+    print(f"F1: {f1}")
